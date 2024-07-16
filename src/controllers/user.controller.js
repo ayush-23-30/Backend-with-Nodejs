@@ -268,7 +268,7 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
 const getCurrentUser = asyncHandler(async (req, res) => {
   return res
     .status(200)
-    .json(200, req.user, "current user fetched successfully");
+    .json(new ApiResponse(200, req.user, "current user fetched successfully"));
 });
 
 const updateAccountDetails = asyncHandler(async (req, res) => {
@@ -281,7 +281,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
     );
   }
 
-  const user = User.findByIdAndUpdate(
+  const user = await  User.findByIdAndUpdate(
     req.user?._id,
     {
       $set: {
@@ -296,7 +296,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, user, "Account Details update succesfully "));
+    .json(new ApiResponse(200, user, "Account Details update succesfully"));
 });
 
 const updateUserAvatar = asyncHandler(async (req, res) => {
@@ -342,23 +342,24 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
     throw new ApiError(400, "cover image file is missing");
   }
 
-  const user = await user.findByIdAndUpdate(
-    req.file?._id,
-    {
-      $set: { // user to set new image in mongo db 
-        coverImage: coverImage.url,
+  const user = await user
+    .findByIdAndUpdate(
+      req.file?._id,
+      {
+        $set: {
+          // user to set new image in mongo db
+          coverImage: coverImage.url,
+        },
       },
-    },
-    {
-      new: true,
-    }
-  ).select("-password")
+      {
+        new: true,
+      }
+    )
+    .select("-password");
   return res
     .status(200)
-    .json(
-        new ApiResponse(200, user, "Cover image updated successfully")
-    )
-})
+    .json(new ApiResponse(200, user, "Cover image updated successfully"));
+});
 
 export {
   registerUser,
@@ -369,5 +370,5 @@ export {
   getCurrentUser,
   updateAccountDetails,
   updateUserAvatar,
-  updateUserCoverImage
+  updateUserCoverImage,
 };
