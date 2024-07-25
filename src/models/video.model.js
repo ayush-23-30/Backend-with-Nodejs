@@ -43,4 +43,4 @@ const videoSchema = new Schema(
 
 videoSchema.plugin(mongooseAggregatePaginate) // it is used to divide a large dataset into smaller, more managebale pieces that can be displayed or processed efficeiently, retrive a subset of data from a collection in a structure manner.  
 
-export const Video = mongoose.model("video", videoSchema);
+export const Video = mongoose.model("Video", videoSchema);
